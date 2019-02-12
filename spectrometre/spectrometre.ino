@@ -13,7 +13,7 @@ Stepper myStepper(stepsPerRevolution, 8, 9, 10, 11);
 SoftwareSerial hc06(7,8);
 
 void setup() {
-  Serial.begin(115200);
+  Serial.begin(57600);
   hc06.begin(9600);
 }
 
@@ -35,13 +35,15 @@ void loop() {
       else{
         sensor_val = 5.0f;
       }
-      dataToSend = String(i) + ',' + String(sensor_val) +';';
-      hc06.print(dataToSend);
+      dataToSend += String(sensor_val) + ',';
+      
      /* myStepper.step(1);
       stepCount++;*/
       delay(100);
    }
-    hc06.print("\n");
+   Serial.println(dataToSend);
+   hc06.print(dataToSend);
+   hc06.print("\n");
 /*
     //retour à 0 manuel pour l'instant
     for (int i=0; i <= stepsPerRevolution; i++){
