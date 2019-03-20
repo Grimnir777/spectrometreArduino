@@ -12,7 +12,7 @@ int pinSensorHome;
 
 String cmd="";
 String dataToSend = "";
-float MesurePhotodetecteur=0.0f;
+double MesurePhotodetecteur=0.0f;
 
 
 int inByte ;
@@ -26,17 +26,17 @@ void initialisation (){
   while (sensorHome != LOW) {
     // Mouvement du moteur
     Serial.println("clockwise");
-    myStepper.step(10);
+    myStepper.step(0-stepsPerRevolution);
 
     // Qd la commande est fini je remets à 0 les sorties 8,9, 10 et 11
+    digitalWrite(8, LOW);
+    digitalWrite(9, LOW);
+    digitalWrite(10, LOW);
+    digitalWrite(11, LOW);
+    
     sensorHome = digitalRead (pinSensorHome);
-  }
-  digitalWrite(8, LOW);
-  digitalWrite(9, LOW);
-  digitalWrite(10, LOW);
-  digitalWrite(11, LOW);
 }
-
+}
 
 
 
@@ -70,28 +70,26 @@ void loop() {
 
    if(cmd=="acq"){
     dataToSend = "";
-    initialisation(); 
+
     
     stepCount = 0; 
-    while (stepCount != 80){
+    while (stepCount != 400){
       // Automatic one step at time CW:
       myStepper.step(1);
       stepCount++;
-      //Serial.println(stepCount);
-      
+      Serial.println(String(stepCount));
+      Serial.println(String(analogRead (A0)));
       dataToSend = String(analogRead (A0)) + '\n';
       Serial1.print(dataToSend);
       
-      delay(1000);
+      delay(200);
       // Quand la commande est fini je remet à 0 les sorties 8,9, 10 et 11
       digitalWrite(8, LOW);
       digitalWrite(9, LOW);
       digitalWrite(10, LOW);
       digitalWrite(11, LOW);
+  
 
-      // Lancer acquisition
-      
-      Serial.println(MesurePhotodetecteur);
     }
 
     // Remise à 0 du compteur et de la mesure
@@ -107,6 +105,25 @@ void loop() {
    else if(cmd=="calib"){
       Serial.println("Calib\n");
       //TODO
+   }
+   else if(cmd=="left"){
+      Serial.println("Left\n");
+
+      myStepper.step(-5);
+      delay(200);
+      digitalWrite(8, LOW);
+      digitalWrite(9, LOW);
+      digitalWrite(10, LOW);
+      digitalWrite(11, LOW);
+   }
+   else if(cmd=="right"){
+      Serial.println("Right\n");
+      myStepper.step(5);
+      delay(200);
+      digitalWrite(8, LOW);
+      digitalWrite(9, LOW);
+      digitalWrite(10, LOW);
+      digitalWrite(11, LOW);
    }
    else{
        Serial.println("Not a command\n");
