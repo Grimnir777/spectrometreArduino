@@ -71,9 +71,29 @@ void loop() {
    if(cmd=="acq"){
     dataToSend = "";
 
+    //passage de spectres
+    /*
+      stepCount = 0; 
+
+      
+      while (stepCount != 350){
+        // Automatic one step at time CW:
+        myStepper.step(1);
+        stepCount++;
+        Serial.println(String(stepCount));
+        
+        delay(200);
+        // Quand la commande est fini je remet à 0 les sorties 8,9, 10 et 11
+        digitalWrite(8, LOW);
+        digitalWrite(9, LOW);
+        digitalWrite(10, LOW);
+        digitalWrite(11, LOW);
+    
+  
+      }*/
     
     stepCount = 0; 
-    while (stepCount != 400){
+    while (stepCount != 600){
       // Automatic one step at time CW:
       myStepper.step(1);
       stepCount++;
@@ -106,24 +126,28 @@ void loop() {
       Serial.println("Calib\n");
       //TODO
    }
-   else if(cmd=="left"){
-      Serial.println("Left\n");
+   else if(cmd.indexOf("left") >= 0){
+      Serial.println("Left\n" + cmd.substring(cmd.indexOf("-")) );
 
-      myStepper.step(-5);
+      myStepper.step(0 - cmd.substring(cmd.indexOf("-")+1).toInt());
       delay(200);
       digitalWrite(8, LOW);
       digitalWrite(9, LOW);
       digitalWrite(10, LOW);
       digitalWrite(11, LOW);
    }
-   else if(cmd=="right"){
+   else if(cmd.indexOf("right") >= 0){
       Serial.println("Right\n");
-      myStepper.step(5);
+      
+      myStepper.step(cmd.substring(cmd.indexOf("-")+1).toInt());
       delay(200);
       digitalWrite(8, LOW);
       digitalWrite(9, LOW);
       digitalWrite(10, LOW);
       digitalWrite(11, LOW);
+   }
+   else if(cmd=="raz"){
+      initialisation();
    }
    else{
        Serial.println("Not a command\n");
